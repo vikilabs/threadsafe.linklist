@@ -13,7 +13,28 @@
 #include "list.h"
 #include "alloc_util.h"
 
-struct node *create_node(void *data, int data_size)
+
+struct list *list_init()
+{
+    struct list *l = NULL;
+    l = (struct list *) calloc(1, sizeof(struct list));
+    
+    if(!l){
+        printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
+    }else{
+        l->head = NULL;
+        l->tail = NULL;
+    }
+
+    return l;
+}
+
+int8_t list_terminate(struct list *l)
+{
+    return 0;
+}
+
+struct node *list_create_node(void *data, int data_size)
 {
     struct node *n = NULL;
     void *d = NULL;
@@ -56,24 +77,10 @@ safe_return:
 }
 
 
-struct list *list_create()
-{
-    struct list *l = NULL;
-    l = (struct list *) calloc(1, sizeof(struct list));
-    
-    if(!l){
-        printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
-    }else{
-        l->head = NULL;
-        l->tail = NULL;
-    }
-
-    return l;
-}
 
 /* adding like a queue fashion. Adding new node to the tail of the list
  */
-int8_t list_add(struct list *l, struct node *n)
+int8_t list_add_node(struct list *l, struct node *n)
 {
     assert( l != NULL);
     assert( n != NULL);
@@ -147,7 +154,7 @@ int8_t list_add(struct list *l, struct node *n)
 
 /* adding like a queue fashion. Adding new node to the tail of the list
  */
-int8_t list_delete(struct list *l, struct node *n)
+int8_t list_delete_node(struct list *l, struct node *n)
 {
     struct node *d=NULL, *itr=NULL;
     struct node *n1 = NULL, *n2=NULL;

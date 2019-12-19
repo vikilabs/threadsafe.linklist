@@ -1,1 +1,1 @@
-gcc list_test.c list.c
+gcc list_test.c ../src/list.c -I../src/
