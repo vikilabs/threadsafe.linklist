@@ -78,8 +78,6 @@ safe_return:
 
 
 
-/* adding like a queue fashion. Adding new node to the tail of the list
- */
 int8_t list_add_node(struct list *l, struct node *n)
 {
     assert( l != NULL);
@@ -90,7 +88,7 @@ int8_t list_add_node(struct list *l, struct node *n)
         /*
             .........         .........     
             .       .         .       .
-            .  TAIL .         . HEAD  . 
+            .  HEAD .         . TAIL  . 
             .       .         .       .
             .........         .........
 
@@ -109,41 +107,41 @@ int8_t list_add_node(struct list *l, struct node *n)
 
         /*
 
-                                      .........                 .........     
-                                      .       .                 .       .
-                                      .  TAIL .                 . HEAD  . 
-                                      .       .                 .       .
-                                      .........                 .........
+            .........                 .........     
+            .       .                 .       .
+            .  HEAD .                 . TAIL  . 
+            .       .                 .       .
+            .........                 .........
 
-                                        |                           |
-                                        V                           V
-                  ...............     ...........               ........
-                  .             .---> .         . --  ----  --> .      .
-         NULL <---.   NEW NODE  .<--- .  NODE   . <-- ----  --- . NODE .     
-                  ...............     ...........               ........
+                |                       |
+                V                       V
+            ...........               ........      ............
+            .         . --  ----  --> .      . ---> .          .---> NULL
+            .  NODE   . <-- ----  --- . NODE . <--- . NEW NODE .  
+            ...........               ........      ............
 
         */
 
-        n->prev = NULL;
-        n->next = l->tail;
-        l->tail->prev = n;
+        n->next = NULL;
+        n->prev = l->tail;
+        l->tail->next = n;
 
         /*
-                    .........                                   .........     
-                    .       .                                   .       .
-                    .  TAIL .                                   . HEAD  . 
-                    .       .                                   .       .
-                    .........                                   .........
 
-                        |                                           |
-                        V                                           V
-                  ...............     ...........               ........
-                  .             .---> .         . --  ----  --> .      .
-         NULL <---.   NEW NODE  .<--- .  NODE   . <-- ----  --- . NODE .     
-                  ...............     ...........               ........
+            .........                               .........     
+            .       .                               .       .
+            .  HEAD .                               . TAIL  . 
+            .       .                               .       .
+            .........                               .........
 
+                |                                       |
+                V                                       V
+            ...........               ........      ............
+            .         . --  ----  --> .      . ---> .          .---> NULL
+            .  NODE   . <-- ----  --- . NODE . <--- . NEW NODE .  
+            ...........               ........      ............
 
-        */      
+        */
 
         l->tail = n;
     }
@@ -170,7 +168,7 @@ int8_t list_delete_node(struct list *l, struct node *n)
 
                     .........                         .........     
                     .       .                         .       .
-                    .  TAIL .                         . HEAD  . 
+                    .  HEAD .                         . TAIL  . 
                     .       .                         .       .
                     .........                         .........
 
@@ -187,9 +185,17 @@ int8_t list_delete_node(struct list *l, struct node *n)
             
             d = itr;
 
-            if(d == l->head){
-                l->head = l->head->prev;
-                l->head->next = NULL;
+            if(d == l->head){           
+                if(l->head == l->tail){ // only one element in list
+                    l->tail   = NULL;
+                    l->head   = NULL;
+                }else{                  // more than one element in list
+                    l->head = l->head->next;
+                    l->head->prev = NULL;
+                }
+            }else if(d == l->tail){     
+                l->tail = l->tail->next;
+                l->tail->prev = NULL;
             }else{
                 n1 = d->prev;
                 n2 = d->next;
@@ -199,11 +205,10 @@ int8_t list_delete_node(struct list *l, struct node *n)
 
             free(d);
             d = NULL;
-
-            itr = itr->prev;
-
+            n = NULL;
         }
 
+        itr = itr->prev;
     }
 
     return 0;

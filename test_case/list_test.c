@@ -95,7 +95,10 @@ void list_test1_add_element()
 {
     int i = 2;
     struct list *l = list_init();
-    struct node *n = NULL;
+    struct node *n1 = NULL;
+    struct node *n2 = NULL;
+    struct node *n3 = NULL;
+    struct node *n4 = NULL;
 
     if(l==NULL){
         TEST_FAIL("list should not be null");
@@ -104,16 +107,138 @@ void list_test1_add_element()
     }
 
     //first element
-    n = list_create_node(&i, sizeof(int));
+    n1 = list_create_node(&i, sizeof(int));
 
-    if(!n){
+    if(!n1){
         TEST_FAIL("node should not be NULL");
     }else{
         TEST_PASS("node should not be NULL");
     }
 
 
-    if(list_add_node(l, n) == 0){
+    if(list_add_node(l, n1) == 0){
+        TEST_PASS("list_add_node() success");
+    }else{
+        TEST_FAIL("list_add_node() success");
+    }
+
+    if( (*( (int *) l->head->data ) == 2 ) &&\
+          ( l->head->next  == NULL ) &&\
+          ( l->tail->prev  == NULL ))
+    {
+        TEST_PASS("list first element added properly");
+    }else{
+        TEST_FAIL("list first element not added properly");
+    }
+
+    //second element
+    i = 4;
+    n2 = list_create_node(&i, sizeof(int));
+
+    if(!n2){
+        TEST_FAIL("node should not be NULL");
+    }else{
+        TEST_PASS("node should not be NULL");
+    }
+
+    if(list_add_node(l, n2) == 0){
+        TEST_PASS("list_add_node() success");
+    }else{
+        TEST_FAIL("list_add_node() success");
+    }
+
+    if(   (*( (int *) l->head->data ) == 2 ) &&\
+          (*( (int *) l->head->prev->data ) == 4 ) &&\
+          ( l->head->next  == NULL ) &&\
+          ( l->tail->prev  == NULL ))
+    {
+        TEST_PASS("list second element added properly");
+    }else{
+        TEST_FAIL("list second element not added properly");
+    }
+
+    //third element
+    i = 6;
+    n3 = list_create_node(&i, sizeof(int));
+
+    if(!n3){
+        TEST_FAIL("node should not be NULL");
+    }else{
+        TEST_PASS("node should not be NULL");
+    }
+
+    if(list_add_node(l, n3) == 0){
+        TEST_PASS("list_add_node() success");
+    }else{
+        TEST_FAIL("list_add_node() success");
+    }
+
+    if(   (*( (int *) l->head->data ) == 2 ) &&\
+          (*( (int *) l->head->prev->data ) == 4 ) &&\
+          (*( (int *) l->head->prev->prev->data ) == 6 ) &&\
+          ( l->head->next  == NULL ) &&\
+          ( l->tail->prev  == NULL ))
+    {
+        TEST_PASS("list third element added properly");
+    }else{
+        TEST_FAIL("list third element not added properly");
+    }
+
+    //fourth element
+    i = 8;
+    n4 = list_create_node(&i, sizeof(int));
+
+    if(!n4){
+        TEST_FAIL("node should not be NULL");
+    }else{
+        TEST_PASS("node should not be NULL");
+    }
+
+    if(list_add_node(l, n4) == 0){
+        TEST_PASS("list_add_node() success");
+    }else{
+        TEST_FAIL("list_add_node() success");
+    }
+
+    if(   (*( (int *) l->head->data ) == 2 ) &&\
+          (*( (int *) l->head->prev->data ) == 4 ) &&\
+          (*( (int *) l->head->prev->prev->data ) == 6 ) &&\
+          (*( (int *) l->head->prev->prev->prev->data ) == 8 ) &&\
+          ( l->head->next  == NULL ) &&\
+          ( l->tail->prev  == NULL ))
+    {
+        TEST_PASS("list fourth element added properly");
+    }else{
+        TEST_FAIL("list fourth element not added properly");
+    }
+
+
+
+}
+
+void list_test1_delete_element()
+{
+    int i = 2;
+    struct list *l = list_init();
+    struct node *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
+
+    if(l==NULL){
+        TEST_FAIL("list should not be null");
+    }else{
+        TEST_PASS("list should not be null");
+    }
+
+    //first element
+    n1 = list_create_node(&i, sizeof(int));
+
+    if(!n1){
+        TEST_FAIL("node should not be NULL");
+    }else{
+        TEST_PASS("node should not be NULL");
+    }
+
+
+    if(list_add_node(l, n1) == 0){
         TEST_PASS("list_add_node() success");
     }else{
         TEST_FAIL("list_add_node() success");
@@ -127,15 +252,15 @@ void list_test1_add_element()
 
     //second element
     i = 4;
-    n = list_create_node(&i, sizeof(int));
+    n2 = list_create_node(&i, sizeof(int));
 
-    if(!n){
+    if(!n2){
         TEST_FAIL("node should not be NULL");
     }else{
         TEST_PASS("node should not be NULL");
     }
 
-    if(list_add_node(l, n) == 0){
+    if(list_add_node(l, n2) == 0){
         TEST_PASS("list_add_node() success");
     }else{
         TEST_FAIL("list_add_node() success");
@@ -149,15 +274,15 @@ void list_test1_add_element()
 
     //third element
     i = 6;
-    n = list_create_node(&i, sizeof(int));
+    n3 = list_create_node(&i, sizeof(int));
 
-    if(!n){
+    if(!n3){
         TEST_FAIL("node should not be NULL");
     }else{
         TEST_PASS("node should not be NULL");
     }
 
-    if(list_add_node(l, n) == 0){
+    if(list_add_node(l, n3) == 0){
         TEST_PASS("list_add_node() success");
     }else{
         TEST_FAIL("list_add_node() success");
@@ -171,15 +296,15 @@ void list_test1_add_element()
 
     //fourth element
     i = 8;
-    n = list_create_node(&i, sizeof(int));
+    n4 = list_create_node(&i, sizeof(int));
 
-    if(!n){
+    if(!n4){
         TEST_FAIL("node should not be NULL");
     }else{
         TEST_PASS("node should not be NULL");
     }
 
-    if(list_add_node(l, n) == 0){
+    if(list_add_node(l, n4) == 0){
         TEST_PASS("list_add_node() success");
     }else{
         TEST_FAIL("list_add_node() success");
@@ -191,6 +316,79 @@ void list_test1_add_element()
         TEST_FAIL("list fourth element not added properly");
     }
 
+
+    //delete(6)        |   8 <-> 6 <-> 4 <-> 2
+
+    if(list_delete_node(l, n3) == 0){
+        TEST_PASS("list element deleted");
+    }else{
+        TEST_FAIL("list element not deleted");
+    }
+
+    if( (    *( (int *) l->head->data) == 2) \
+        && ( *( (int *) l->head->prev->data) == 4) \
+        && ( *( (int *) l->head->prev->prev->data) == 8) \
+        && (            l->head->prev->prev->prev == NULL) \
+        && (            l->head->next  == NULL) \
+        && (            l->tail->prev  == NULL )){
+        TEST_PASS("list third element(6) deleted properly");
+    }else{
+        TEST_FAIL("list third element(6) deleted properly");
+    }
+
+    
+    //delete(2)        |   8 <-> 4 <-> 2
+    
+    if(list_delete_node(l, n1) == 0){
+        TEST_PASS("list element deleted");
+    }else{
+        TEST_FAIL("list element not deleted");
+    }
+
+    if( (    *( (int *) l->head->data) == 4) \
+        && ( *( (int *) l->head->prev->data) == 8) \
+        && (            l->head->prev->prev == NULL) \
+        && (            l->head->next  == NULL) \
+        && (            l->tail->prev  == NULL )){
+        TEST_PASS("list head element(2) deleted properly");
+    }else{
+        TEST_FAIL("list head element(2) deleted properly");
+    }
+
+    //delete(8)        |   8 <-> 4 
+    if(list_delete_node(l, n4) == 0){
+        TEST_PASS("list element deleted");
+    }else{
+        TEST_FAIL("list element not deleted");
+    }
+
+    if( (    *( (int *) l->head->data) == 4) \
+        && ( *( (int *) l->tail->data) == 4) \
+        && (            l->head->next  == NULL) \
+        && (            l->head->prev  == NULL) \
+        && (            l->tail->next  == NULL) \
+        && (            l->tail->prev  == NULL )){
+        TEST_PASS("list third element deleted properly");
+    }else{
+        TEST_FAIL("list third element deleted properly");
+    }
+
+    //delete(4)        |   NULL <-> 4 <-> NULL
+    if(list_delete_node(l, n2) == 0){
+        TEST_PASS("list element deleted");
+    }else{
+        TEST_FAIL("list element not deleted");
+    }
+
+    if( ( l->head  == NULL) &&\
+        ( l->tail  == NULL))
+    {
+        TEST_PASS("list last element deleted properly");
+    }else{
+        TEST_FAIL("list last element deleted properly");
+    }
+
+
 }
 
 
@@ -201,6 +399,7 @@ int main()
         list_test1_create_node,
         list_test1_create_list,
         list_test1_add_element,
+        list_test1_delete_element,
         NULL
     };
     
