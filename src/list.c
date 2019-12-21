@@ -31,6 +31,20 @@ struct list *list_init()
 
 int8_t list_terminate(struct list *l)
 {
+    struct node *itr=NULL, *d=NULL;
+
+    assert( l != NULL);
+
+    itr = l->head;
+    l->head = NULL;
+    l->tail = NULL;
+
+    while(itr){
+        d = itr;
+        itr = itr->next;
+        free(d);
+    }
+
     return 0;
 }
 
@@ -75,7 +89,6 @@ safe_return:
 
     return n;
 }
-
 
 
 int8_t list_add_node(struct list *l, struct node *n)
@@ -194,8 +207,8 @@ int8_t list_delete_node(struct list *l, struct node *n)
                     l->head->prev = NULL;
                 }
             }else if(d == l->tail){     
-                l->tail = l->tail->next;
-                l->tail->prev = NULL;
+                l->tail = l->tail->prev;
+                l->tail->next = NULL;
             }else{
                 n1 = d->prev;
                 n2 = d->next;
@@ -208,7 +221,7 @@ int8_t list_delete_node(struct list *l, struct node *n)
             n = NULL;
         }
 
-        itr = itr->prev;
+        itr = itr->next;
     }
 
     return 0;
