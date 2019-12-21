@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "list.h"
 #include "test_util.h"
 #include "alloc_util.h"
@@ -490,6 +491,8 @@ void list_terminate_test()
     }else{
         TEST_FAIL("list fourth element not added properly");
     }
+
+    sleep(60);
 
     if(list_terminate(l) == 0){
         TEST_PASS("list terminate");
