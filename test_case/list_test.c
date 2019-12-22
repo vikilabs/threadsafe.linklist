@@ -6,6 +6,8 @@
 #include "test_util.h"
 #include "lalloc.h"
 
+#define HUNDRED_MS 100000
+
 typedef void (*testcase_t) (void);
 
 void list_test1_create_list()
@@ -548,6 +550,9 @@ void list_terminate_test()
 
 void *th_create_n_add_node(void *args)
 {
+    int val = HUNDRED_MS * (rand()%7);
+    usleep(val);
+
     int i = (int)GetDynMemoryUsage();
     struct list *l = (struct list *) args;
     struct node *n = NULL;
@@ -570,6 +575,9 @@ void *th_create_n_add_node(void *args)
 
 void *th_delete_node(void *args)
 {
+    int val = HUNDRED_MS * (rand()%7);
+    usleep(val);
+
     struct list *l = (struct list *) args;
     if(list_delete_node(l, NULL) == 0){
         TEST_PASS("list element deleted");
