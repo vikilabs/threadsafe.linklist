@@ -47,7 +47,7 @@ void list_test1_create_node()
 {
     int i = 0xFF;
 
-    struct node *n = NULL;
+    struct lnode *n = NULL;
     
     n = list_create_node(&i, sizeof(int));
 
@@ -107,10 +107,10 @@ void list_test1_add_element()
     int i = 2;
     struct list *l = list_init();
     
-    struct node *n1 = NULL;
-    struct node *n2 = NULL;
-    struct node *n3 = NULL;
-    struct node *n4 = NULL;
+    struct lnode *n1 = NULL;
+    struct lnode *n2 = NULL;
+    struct lnode *n3 = NULL;
+    struct lnode *n4 = NULL;
 
     if(l==NULL){
         TEST_FAIL("list should not be null");
@@ -123,7 +123,7 @@ void list_test1_add_element()
     //first element
     n1 = list_create_node(&i, sizeof(int));
 
-    calc_mem += sizeof(struct node) + sizeof(i) + start_mem;
+    calc_mem += sizeof(struct lnode) + sizeof(i) + start_mem;
 
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check");
@@ -180,7 +180,7 @@ void list_test1_add_element()
         TEST_FAIL("list second element not added properly");
     }
 
-    calc_mem += sizeof(struct node) + sizeof(i);
+    calc_mem += sizeof(struct lnode) + sizeof(i);
 
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check");
@@ -215,7 +215,7 @@ void list_test1_add_element()
         TEST_FAIL("list third element not added properly");
     }
 
-    calc_mem += sizeof(struct node) + sizeof(i);
+    calc_mem += sizeof(struct lnode) + sizeof(i);
 
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check");
@@ -253,7 +253,7 @@ void list_test1_add_element()
         TEST_FAIL("list fourth element not added properly");
     }
 
-    calc_mem += sizeof(struct node) + sizeof(i);
+    calc_mem += sizeof(struct lnode) + sizeof(i);
 
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check");
@@ -267,7 +267,7 @@ void list_test1_delete_element()
 {
     int i = 2;
     struct list *l = list_init();
-    struct node *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
+    struct lnode *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
     size_t start_mem = 0;
     size_t calc_mem = 0;
 
@@ -376,7 +376,7 @@ void list_test1_delete_element()
         TEST_FAIL("list element not deleted");
     }
 
-    calc_mem = start_mem - (sizeof(struct node) + sizeof(int));
+    calc_mem = start_mem - (sizeof(struct lnode) + sizeof(int));
     
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check after delete");
@@ -405,7 +405,7 @@ void list_test1_delete_element()
         TEST_FAIL("list element not deleted");
     }
 
-    calc_mem -= (sizeof(struct node) + sizeof(int));
+    calc_mem -= (sizeof(struct lnode) + sizeof(int));
     
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check after delete");
@@ -431,7 +431,7 @@ void list_test1_delete_element()
         TEST_FAIL("list element not deleted");
     }
 
-    calc_mem -= sizeof(struct node); /*Deleting NULL data so no int addition*/
+    calc_mem -= sizeof(struct lnode); /*Deleting NULL data so no int addition*/
     
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check after delete");
@@ -458,7 +458,7 @@ void list_test1_delete_element()
         TEST_FAIL("list element not deleted");
     }
 
-    calc_mem -= (sizeof(struct node) + sizeof(int));
+    calc_mem -= (sizeof(struct lnode) + sizeof(int));
     
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check after delete");
@@ -483,7 +483,7 @@ void list_terminate_test()
 {
     int i = 2;
     struct list *l = list_init();
-    struct node *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
+    struct lnode *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
 
     struct rusage r_usage;
 
@@ -596,7 +596,7 @@ void *th_create_n_add_node(void *args)
 
     int i = (int)GetDynMemoryUsage();
     struct list *l = (struct list *) args;
-    struct node *n = NULL;
+    struct lnode *n = NULL;
     n = list_create_node(&i, sizeof(int));
 
     if(!n){
@@ -632,7 +632,7 @@ void list_test1_multithreaded()
 {
     int i = 0;
     struct list *l = list_init();
-    struct node *itr = NULL;
+    struct lnode *itr = NULL;
     pthread_t tid[100], dtid[100]; 
 
     for(i=0;i<100;i++){
@@ -678,7 +678,7 @@ void list_test2_multithreaded()
 {
     int i = 0;
     struct list *l = list_init();
-    struct node *itr = NULL;
+    struct lnode *itr = NULL;
     pthread_t tid[100], dtid[100]; 
 
     for(i=0;i<100;i++){

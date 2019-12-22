@@ -53,7 +53,7 @@ struct list *list_init()
 
 int8_t list_terminate(struct list *l)
 {
-    struct node *itr=NULL, *d=NULL;
+    struct lnode *itr=NULL, *d=NULL;
 
     assert( l != NULL);
     
@@ -79,13 +79,13 @@ int8_t list_terminate(struct list *l)
     return 0;
 }
 
-struct node *list_create_node(void *data, size_t data_size)
+struct lnode *list_create_node(void *data, size_t data_size)
 {
-    struct node *n = NULL;
+    struct lnode *n = NULL;
     void *d = NULL;
     int8_t ret = 0;
 
-    /* It is possible to alloc a node with NULL data */
+    /* It is possible to alloc a lnode with NULL data */
     if( (data) && ( data_size > 0 )){
         d = (void *) lalloc(data_size);
         
@@ -96,7 +96,7 @@ struct node *list_create_node(void *data, size_t data_size)
     
     }
 
-    n = (void *) lalloc(sizeof(struct node));
+    n = (void *) lalloc(sizeof(struct lnode));
 
     if(!n){
         printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
@@ -122,7 +122,7 @@ safe_return:
 }
 
 
-int8_t list_add_node(struct list *l, struct node *n)
+int8_t list_add_node(struct list *l, struct lnode *n)
 {
     assert( l != NULL);
     assert( n != NULL);
@@ -207,10 +207,10 @@ int8_t list_add_node(struct list *l, struct node *n)
 
 /* adding like a queue fashion. Adding new node to the tail of the list
  */
-int8_t list_delete_node(struct list *l, struct node *n)
+int8_t list_delete_node(struct list *l, struct lnode *n)
 {
-    struct node *d=NULL, *itr=NULL;
-    struct node *n1 = NULL, *n2=NULL;
+    struct lnode *d=NULL, *itr=NULL;
+    struct lnode *n1 = NULL, *n2=NULL;
 
     assert( l != NULL);
     
@@ -297,7 +297,7 @@ int get_nodes_count(struct list *l)
 
 void traverse_list(struct list *l)
 {
-    struct node *itr;
+    struct lnode *itr;
     assert(l);
     
     list_lock(l);
