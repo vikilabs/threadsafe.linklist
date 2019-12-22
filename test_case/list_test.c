@@ -4,14 +4,14 @@
 #include <unistd.h>
 #include "list.h"
 #include "test_util.h"
-#include "alloc_util.h"
+#include "lalloc.h"
 
 typedef void (*testcase_t) (void);
 
 void list_test1_create_list()
 {
+    size_t start_mem = GetDynMemoryUsage();
     struct list *l = list_init();
-
 
     if(l==NULL){
         TEST_FAIL("list should not be NULL");
@@ -31,7 +31,13 @@ void list_test1_create_list()
         TEST_FAIL("tail should be NULL");
     }
 
-    SAFE_FREE(l);
+    if( (start_mem + sizeof(struct list)) != GetDynMemoryUsage()){
+        TEST_FAIL("struct list memory check");
+    }else{
+        TEST_PASS("struct list memory check");
+    }
+
+    LFREE(l);
 }
 
 
@@ -55,7 +61,7 @@ void list_test1_create_node()
         TEST_FAIL("node should store the data properly");
     }
 
-    SAFE_FREE(n);
+    LFREE(n);
 
     n = list_create_node(NULL, sizeof(int));
 
@@ -71,7 +77,7 @@ void list_test1_create_node()
         TEST_FAIL("n->data should be NULL");
     }
 
-    SAFE_FREE(n);
+    LFREE(n);
 
     n = list_create_node(&i, 0);
 
@@ -87,15 +93,18 @@ void list_test1_create_node()
         TEST_FAIL("n->data should be NULL");
     }
     
-    SAFE_FREE(n);
+    LFREE(n);
 
 }
 
 
 void list_test1_add_element()
 {
+    size_t start_mem = 0;
+    size_t calc_mem = 0;
     int i = 2;
     struct list *l = list_init();
+    
     struct node *n1 = NULL;
     struct node *n2 = NULL;
     struct node *n3 = NULL;
@@ -107,8 +116,19 @@ void list_test1_add_element()
         TEST_PASS("list should not be null");
     }
 
+    start_mem = GetDynMemoryUsage();
+
     //first element
     n1 = list_create_node(&i, sizeof(int));
+
+    calc_mem += sizeof(struct node) + sizeof(i) + start_mem;
+
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check");
+    }else{
+        TEST_PASS("struct list node memory check");
+    }
+
 
     if(!n1){
         TEST_FAIL("node should not be NULL");
@@ -158,6 +178,14 @@ void list_test1_add_element()
         TEST_FAIL("list second element not added properly");
     }
 
+    calc_mem += sizeof(struct node) + sizeof(i);
+
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check");
+    }else{
+        TEST_PASS("struct list node memory check");
+    }
+
     //third element
     i = 6;
     n3 = list_create_node(&i, sizeof(int));
@@ -184,6 +212,16 @@ void list_test1_add_element()
     }else{
         TEST_FAIL("list third element not added properly");
     }
+
+    calc_mem += sizeof(struct node) + sizeof(i);
+
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check");
+    }else{
+        TEST_PASS("struct list node memory check");
+    }
+
+
 
     //fourth element
     i = 8;
@@ -213,7 +251,13 @@ void list_test1_add_element()
         TEST_FAIL("list fourth element not added properly");
     }
 
+    calc_mem += sizeof(struct node) + sizeof(i);
 
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check");
+    }else{
+        TEST_PASS("struct list node memory check");
+    }
 
 }
 
@@ -398,6 +442,8 @@ void list_terminate_test()
     struct list *l = list_init();
     struct node *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
 
+    struct rusage r_usage;
+
     if(l==NULL){
         TEST_FAIL("list should not be null");
     }else{
@@ -492,13 +538,12 @@ void list_terminate_test()
         TEST_FAIL("list fourth element not added properly");
     }
 
-    sleep(60);
-
     if(list_terminate(l) == 0){
         TEST_PASS("list terminate");
     }else{
         TEST_FAIL("list terminate");
     }
+
 }
 
 int main()
@@ -517,8 +562,6 @@ int main()
         testcases[i](); 
         i++;
     }
-
-
 
     return 0;
 }

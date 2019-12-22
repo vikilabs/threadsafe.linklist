@@ -11,13 +11,13 @@
 #include <string.h>
 #include <assert.h>
 #include "list.h"
-#include "alloc_util.h"
+#include "lalloc.h"
 
 
 struct list *list_init()
 {
     struct list *l = NULL;
-    l = (struct list *) calloc(1, sizeof(struct list));
+    l = (struct list *) lalloc(sizeof(struct list));
     
     if(!l){
         printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
@@ -42,7 +42,7 @@ int8_t list_terminate(struct list *l)
     while(itr){
         d = itr;
         itr = itr->next;
-        free(d);
+        LFREE(d);
     }
 
     return 0;
@@ -56,7 +56,7 @@ struct node *list_create_node(void *data, int data_size)
 
     /* It is possible to alloc a node with NULL data */
     if( (data) && ( data_size > 0 )){
-        d = (void *) calloc(1, data_size);
+        d = (void *) lalloc(data_size);
         
         if(!d){
             printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
@@ -65,11 +65,11 @@ struct node *list_create_node(void *data, int data_size)
     
     }
 
-    n = (void *) calloc(1, sizeof(struct node));
+    n = (void *) lalloc(sizeof(struct node));
 
     if(!n){
         printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
-        SAFE_FREE(d);
+        LFREE(d);
         ret = -1; goto safe_return;
     }
     
@@ -216,7 +216,7 @@ int8_t list_delete_node(struct list *l, struct node *n)
                 n2->prev = n1;
             }
 
-            free(d);
+            LFREE(d);
             d = NULL;
             n = NULL;
         }
