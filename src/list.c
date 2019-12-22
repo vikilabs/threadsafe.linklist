@@ -40,7 +40,7 @@ struct list *list_init()
         
         if(!l->lock){
             printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
-            lfree(l);
+            LFREE(l);
             return NULL;
         }
         
@@ -75,7 +75,7 @@ int8_t list_terminate(struct list *l)
     list_unlock(l);
     
     pthread_mutex_destroy(l->lock);
-    lfree(l->lock);
+    LFREE(l->lock);
     return 0;
 }
 
