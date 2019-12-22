@@ -31,6 +31,9 @@ void lfree(void *mem)
        [0]                                   [1] [2] [3] .............  [ size ] 
     */
 
+    if(!mem)
+        return;
+
     pthread_mutex_lock(&alloc_lock);
     dynamic_memory_usage -= lalloc_size(mem);
     free((size_t *) mem - 1);

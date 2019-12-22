@@ -268,6 +268,8 @@ void list_test1_delete_element()
     int i = 2;
     struct list *l = list_init();
     struct node *n1 = NULL, *n2 = NULL, *n3 = NULL, *n4 = NULL;
+    size_t start_mem = 0;
+    size_t calc_mem = 0;
 
     if(l==NULL){
         TEST_FAIL("list should not be null");
@@ -364,6 +366,8 @@ void list_test1_delete_element()
     }
 
 
+    start_mem = GetDynMemoryUsage();
+    
     //delete(6)        |   8 <-> 6 <-> 4 <-> 2
 
     if(list_delete_node(l, n3) == 0){
@@ -371,6 +375,15 @@ void list_test1_delete_element()
     }else{
         TEST_FAIL("list element not deleted");
     }
+
+    calc_mem = start_mem - (sizeof(struct node) + sizeof(int));
+    
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check after delete");
+    }else{
+        TEST_PASS("struct list node memory check after delete");
+    }
+
 
     if( (    *( (int *) l->head->data) == 2) \
         && ( *( (int *) l->head->next->data) == 4) \
@@ -392,6 +405,15 @@ void list_test1_delete_element()
         TEST_FAIL("list element not deleted");
     }
 
+    calc_mem -= (sizeof(struct node) + sizeof(int));
+    
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check after delete");
+    }else{
+        TEST_PASS("struct list node memory check after delete");
+    }
+
+
     if( (    *( (int *) l->head->data) == 4) \
         && ( *( (int *) l->head->next->data) == 8) \
         && (            l->head->next->next == NULL) \
@@ -408,6 +430,15 @@ void list_test1_delete_element()
     }else{
         TEST_FAIL("list element not deleted");
     }
+
+    calc_mem -= (sizeof(struct node) + sizeof(int));
+    
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check after delete");
+    }else{
+        TEST_PASS("struct list node memory check after delete");
+    }
+
 
     if( (    *( (int *) l->head->data) == 4) \
         && ( *( (int *) l->tail->data) == 4) \
@@ -427,6 +458,16 @@ void list_test1_delete_element()
         TEST_FAIL("list element not deleted");
     }
 
+    calc_mem -= (sizeof(struct node) + sizeof(int));
+    
+    if(calc_mem != GetDynMemoryUsage()){
+        TEST_FAIL("struct list node memory check after delete");
+    }else{
+        TEST_PASS("struct list node memory check after delete");
+    }
+
+
+    
     if( ( l->head  == NULL) &&\
         ( l->tail  == NULL))
     {

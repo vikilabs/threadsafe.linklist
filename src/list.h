@@ -9,13 +9,6 @@
 #include <stdint.h>
 #include <pthread.h>
 
-enum __list_error_codes{
-    OPERATION_SUCCESS,
-    OUT_OF_MEMORY,
-    LIST_HANDLE_NULL,
-    LIST_NODE_NULL
-};
-
 struct node{
     void *data;
     struct node *next, *prev;
@@ -30,7 +23,7 @@ struct list{
 
 extern struct   list    *list_init();
 extern int8_t           list_terminate(struct list *l);
-extern struct   node    *list_create_node(void *data, int data_size);
+extern struct   node    *list_create_node(void *data, size_t data_size);
 extern int8_t           list_add_node(struct list *l, struct node *n);
 extern int8_t           list_delete_node(struct list *l, struct node *n);
 extern void             traverse_list(struct list *l);

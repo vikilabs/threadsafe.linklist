@@ -79,7 +79,7 @@ int8_t list_terminate(struct list *l)
     return 0;
 }
 
-struct node *list_create_node(void *data, int data_size)
+struct node *list_create_node(void *data, size_t data_size)
 {
     struct node *n = NULL;
     void *d = NULL;
@@ -270,7 +270,7 @@ int8_t list_delete_node(struct list *l, struct node *n)
                 n1->next = n2;
                 n2->prev = n1;
             }
-
+            LFREE(d->data);
             LFREE(d);
             d = NULL;
             n = NULL;
