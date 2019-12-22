@@ -31,7 +31,7 @@ void list_test1_create_list()
         TEST_FAIL("tail should be NULL");
     }
 
-    if( (start_mem + sizeof(struct list)) != GetDynMemoryUsage()){
+    if( (start_mem + sizeof(struct list) + sizeof(pthread_mutex_t)) != GetDynMemoryUsage()){
         TEST_FAIL("struct list memory check");
     }else{
         TEST_PASS("struct list memory check");
@@ -546,6 +546,69 @@ void list_terminate_test()
 
 }
 
+void *th_create_node(void *args)
+{
+    sleep(2);
+    int i = (int)GetDynMemoryUsage();
+    struct list *l = (struct list *) args;
+    struct node *n = NULL;
+    n = list_create_node(&i, sizeof(int));
+
+    if(!n){
+        TEST_FAIL("node should not be NULL");
+    }else{
+        TEST_PASS("node should not be NULL");
+    }
+
+    if(list_add_node(l, n) == 0){
+        TEST_PASS("list_add_node() success");
+    }else{
+        TEST_FAIL("list_add_node() success");
+    }
+
+    return NULL;
+}
+
+void *th_delete_node(void *args)
+{
+    sleep(2);
+    struct list *l = (struct list *) args;
+    if(list_delete_node(l, NULL) == 0){
+        TEST_PASS("list element deleted");
+    }else{
+        TEST_FAIL("list element not deleted");
+    }
+    return NULL;
+}
+
+void list_test1_multithreaded()
+{
+    int i = 0;
+    struct list *l = list_init();
+    pthread_t tid[100], dtid[100]; 
+
+    for(i=0;i<100;i++){
+        pthread_create(&tid[i], NULL, &th_create_node, (void *)l);
+    }
+    
+    sleep(20);
+        
+    for(i=0;i<100;i++){
+        pthread_create(&dtid[i], NULL, &th_delete_node, (void *)l);
+    }
+    
+    traverse_list(l);
+    
+    for(i=0;i<100;i++){
+        pthread_join(tid[i], NULL);
+        pthread_join(dtid[i], NULL);
+    }
+
+
+}
+
+
+
 int main()
 {
     int i = 0;
@@ -555,6 +618,7 @@ int main()
         list_test1_add_element,
         list_test1_delete_element,
         list_terminate_test,
+        list_test1_multithreaded,
         NULL
     };
     
