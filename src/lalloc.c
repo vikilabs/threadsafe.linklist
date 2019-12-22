@@ -39,27 +39,26 @@ void lfree(void *mem)
 
 void *lalloc(size_t size)
 {
-  pthread_mutex_lock(&alloc_lock);
-   size_t *mem = calloc(1, sizeof(size_t) + size);
-   
-   if(!mem){
+    pthread_mutex_lock(&alloc_lock);
+    size_t *mem = calloc(1, sizeof(size_t) + size);
+
+    if(!mem){
         pthread_mutex_unlock(&alloc_lock);
         return NULL;
-   }
-    
-    /*
-    
-    <- This memory stores its size ->     <-- This memory area stores the data --->
-    [0]                                   [1] [2] [3] .............  [ size ] 
-    
-    */
+    }
 
-   mem[0] = size;  /* store the size in the first address*/
-    
-   dynamic_memory_usage += mem[0];
-   pthread_mutex_unlock(&alloc_lock);
-   
-   return &mem[1]; /* return the second address to store data*/
+    /*
+
+       <- This memory stores its size ->     <-- This memory area stores the data --->
+       [0]                                   [1] [2] [3] .............  [ size ] 
+
+     */
+
+    mem[0] = size;  /* store the size in the first address*/
+
+    dynamic_memory_usage += mem[0];
+    pthread_mutex_unlock(&alloc_lock);
+    return &mem[1]; /* return the second address to store data*/
 }
 
 static size_t lalloc_size(void *mem)

@@ -546,9 +546,8 @@ void list_terminate_test()
 
 }
 
-void *th_create_node(void *args)
+void *th_create_n_add_node(void *args)
 {
-    sleep(2);
     int i = (int)GetDynMemoryUsage();
     struct list *l = (struct list *) args;
     struct node *n = NULL;
@@ -571,7 +570,6 @@ void *th_create_node(void *args)
 
 void *th_delete_node(void *args)
 {
-    sleep(2);
     struct list *l = (struct list *) args;
     if(list_delete_node(l, NULL) == 0){
         TEST_PASS("list element deleted");
@@ -585,26 +583,70 @@ void list_test1_multithreaded()
 {
     int i = 0;
     struct list *l = list_init();
+    struct node *itr = NULL;
     pthread_t tid[100], dtid[100]; 
 
     for(i=0;i<100;i++){
-        pthread_create(&tid[i], NULL, &th_create_node, (void *)l);
+        pthread_create(&tid[i], NULL, &th_create_n_add_node, (void *)l);
     }
-    
-    sleep(20);
-        
-    for(i=0;i<100;i++){
-        pthread_create(&dtid[i], NULL, &th_delete_node, (void *)l);
-    }
-    
+
     traverse_list(l);
     
     for(i=0;i<100;i++){
         pthread_join(tid[i], NULL);
+    }
+
+    traverse_list(l);
+    
+    if(get_nodes_count(l) != 100){
+        TEST_FAIL("threaded list create");
+    }else{
+        TEST_PASS("threaded list create");
+    }
+
+    for(i=0;i<100;i++){
+        pthread_create(&dtid[i], NULL, &th_delete_node, (void *)l);
+    }
+ 
+    traverse_list(l);
+    
+    for(i=0;i<100;i++){
         pthread_join(dtid[i], NULL);
+    }
+    
+    traverse_list(l);
+
+
+    if(get_nodes_count(l) != 0){
+        TEST_FAIL("threaded list delete");
+    }else{
+        TEST_PASS("threaded list delete");
+    }
+
+}
+
+void list_test2_multithreaded()
+{
+    int i = 0;
+    struct list *l = list_init();
+    struct node *itr = NULL;
+    pthread_t tid[100], dtid[100]; 
+
+    for(i=0;i<100;i++){
+        pthread_create(&tid[i], NULL, &th_create_n_add_node, (void *)l);
+        pthread_create(&dtid[i], NULL, &th_delete_node, (void *)l);
+    }
+    
+    traverse_list(l);
+
+    for(i=0;i<100;i++){
+        pthread_join(dtid[i], NULL);
+        pthread_join(tid[i], NULL);
     }
 
 
+    traverse_list(l);
+    list_terminate(l);
 }
 
 
@@ -619,6 +661,7 @@ int main()
         list_test1_delete_element,
         list_terminate_test,
         list_test1_multithreaded,
+        list_test2_multithreaded, 
         NULL
     };
     

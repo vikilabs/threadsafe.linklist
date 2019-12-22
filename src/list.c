@@ -10,8 +10,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <pthread.h>
 #include "list.h"
 #include "lalloc.h"
+
+static void list_lock(struct list *l)
+{
+    pthread_mutex_lock(l->lock);
+}
+
+static void list_unlock(struct list *l)
+{
+    pthread_mutex_unlock(l->lock);
+}
 
 
 struct list *list_init()
@@ -24,6 +35,17 @@ struct list *list_init()
     }else{
         l->head = NULL;
         l->tail = NULL;
+        l->lock = (pthread_mutex_t *) lalloc(sizeof(pthread_mutex_t));
+        l->node_count = 0;
+        
+        if(!l->lock){
+            printf("( error ) OOM ( %s : %d )\n", __func__, __LINE__);
+            lfree(l);
+            return NULL;
+        }
+        
+        pthread_mutex_init(l->lock, NULL);
+        l->active = 1;
     }
 
     return l;
@@ -34,6 +56,10 @@ int8_t list_terminate(struct list *l)
     struct node *itr=NULL, *d=NULL;
 
     assert( l != NULL);
+    
+   
+    list_lock(l);
+    l->active = 0;
 
     itr = l->head;
     l->head = NULL;
@@ -42,9 +68,14 @@ int8_t list_terminate(struct list *l)
     while(itr){
         d = itr;
         itr = itr->next;
+        l->node_count -= 1;
         LFREE(d);
     }
-
+    
+    list_unlock(l);
+    
+    pthread_mutex_destroy(l->lock);
+    lfree(l->lock);
     return 0;
 }
 
@@ -96,6 +127,13 @@ int8_t list_add_node(struct list *l, struct node *n)
     assert( l != NULL);
     assert( n != NULL);
 
+    list_lock(l);
+ 
+    if(!l->active){
+        list_unlock(l);
+        return -1;
+    }
+   
     if(!l->tail){
 
         /*
@@ -158,6 +196,10 @@ int8_t list_add_node(struct list *l, struct node *n)
 
         l->tail = n;
     }
+    
+    l->node_count += 1;
+    
+    list_unlock(l);
 
     return 0;
 }
@@ -171,9 +213,20 @@ int8_t list_delete_node(struct list *l, struct node *n)
     struct node *n1 = NULL, *n2=NULL;
 
     assert( l != NULL);
-    assert( n != NULL);
+    
+    list_lock(l);
 
-    itr = l->head;
+    if(!l->active){
+        list_unlock(l);
+        return -1;
+    }
+ 
+    if(n == NULL){
+        n = l->tail; /* Delete Tail if argument is NULL*/
+        itr = l->tail;
+    }else{
+        itr = l->head;
+    }
 
     while(itr){
 
@@ -196,6 +249,8 @@ int8_t list_delete_node(struct list *l, struct node *n)
 
         if(itr == n){
             
+            l->node_count -= 1;
+
             d = itr;
 
             if(d == l->head){           
@@ -223,9 +278,42 @@ int8_t list_delete_node(struct list *l, struct node *n)
 
         itr = itr->next;
     }
+    
+    list_unlock(l);
 
     return 0;
 }
 
+int get_nodes_count(struct list *l)
+{
+    int c = 0;
 
+    list_lock(l);
+    c = l->node_count; 
+    list_unlock(l);
+    
+    return c;
+}
+
+void traverse_list(struct list *l)
+{
+    struct node *itr;
+    assert(l);
+    
+    list_lock(l);
+ 
+    if(!l->active){
+        list_unlock(l);
+        return;
+    }
+    
+    itr = l->head;
+    printf("[ list ]");
+    while(itr){
+        printf("[ %d ]->", *((int*)itr->data));
+        itr = itr->next;
+    }
+    printf("\n");
+    list_unlock(l);
+}
 

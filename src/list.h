@@ -7,6 +7,7 @@
 #ifndef _LIST_H
 #define _LIST_H
 #include <stdint.h>
+#include <pthread.h>
 
 enum __list_error_codes{
     OPERATION_SUCCESS,
@@ -21,6 +22,9 @@ struct node{
 };
 
 struct list{
+    uint8_t active;
+    int node_count;
+    pthread_mutex_t *lock;
     struct node *head, *tail;
 };
 
@@ -29,5 +33,7 @@ extern int8_t           list_terminate(struct list *l);
 extern struct   node    *list_create_node(void *data, int data_size);
 extern int8_t           list_add_node(struct list *l, struct node *n);
 extern int8_t           list_delete_node(struct list *l, struct node *n);
+extern void             traverse_list(struct list *l);
+extern int              get_nodes_count(struct list *l);
 
 #endif
