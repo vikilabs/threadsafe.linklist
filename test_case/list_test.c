@@ -345,7 +345,7 @@ void list_test1_delete_element()
 
     //fourth element
     i = 8;
-    n4 = list_create_node(&i, sizeof(int));
+    n4 = list_create_node(NULL, 0);
 
     if(!n4){
         TEST_FAIL("node should not be NULL");
@@ -359,7 +359,7 @@ void list_test1_delete_element()
         TEST_FAIL("list_add_node() success");
     }
 
-    if( *( (int *) l->head->next->next->next->data ) == 8 ){
+    if( l->head->next->next->next->data  == NULL ){
         TEST_PASS("list fourth element added properly");
     }else{
         TEST_FAIL("list fourth element not added properly");
@@ -368,7 +368,7 @@ void list_test1_delete_element()
 
     start_mem = GetDynMemoryUsage();
     
-    //delete(6)        |   8 <-> 6 <-> 4 <-> 2
+    //delete(6)        |   NULL <-> 6 <-> 4 <-> 2
 
     if(list_delete_node(l, n3) == 0){
         TEST_PASS("list element deleted");
@@ -387,7 +387,7 @@ void list_test1_delete_element()
 
     if( (    *( (int *) l->head->data) == 2) \
         && ( *( (int *) l->head->next->data) == 4) \
-        && ( *( (int *) l->head->next->next->data) == 8) \
+        && (  l->head->next->next->data == NULL ) \
         && (            l->head->next->next->next == NULL) \
         && (            l->head->prev  == NULL) \
         && (            l->tail->next  == NULL )){
@@ -397,7 +397,7 @@ void list_test1_delete_element()
     }
 
     
-    //delete(2)        |   8 <-> 4 <-> 2
+    //delete(2)        |   NULL <-> 4 <-> 2
     
     if(list_delete_node(l, n1) == 0){
         TEST_PASS("list element deleted");
@@ -415,7 +415,7 @@ void list_test1_delete_element()
 
 
     if( (    *( (int *) l->head->data) == 4) \
-        && ( *( (int *) l->head->next->data) == 8) \
+        &&( l->head->next->data == NULL) \
         && (            l->head->next->next == NULL) \
         && (            l->head->prev  == NULL) \
         && (            l->tail->next  == NULL )){
@@ -424,14 +424,14 @@ void list_test1_delete_element()
         TEST_FAIL("list head element(2) deleted properly");
     }
 
-    //delete(8)        |   8 <-> 4 
+    //delete(8)        |   NULL <-> 4 
     if(list_delete_node(l, n4) == 0){
         TEST_PASS("list element deleted");
     }else{
         TEST_FAIL("list element not deleted");
     }
 
-    calc_mem -= (sizeof(struct node) + sizeof(int));
+    calc_mem -= sizeof(struct node); /*Deleting NULL data so no int addition*/
     
     if(calc_mem != GetDynMemoryUsage()){
         TEST_FAIL("struct list node memory check after delete");
